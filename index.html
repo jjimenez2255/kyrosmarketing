@@ -130,6 +130,35 @@
         .delete-task:hover { color: #ff6b6b; }
         .edit-hint { font-size: 11px; color: #444; margin-top: 12px; }
         .week-task { display: flex; align-items: center; }
+        .add-creative-btn { background: #fff; border: none; color: #000; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .add-creative-btn:hover { background: #e0e0e0; }
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 1000; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: #1a1a1a; border: 1px solid #333; border-radius: 16px; width: 90%; max-width: 560px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 24px; border-bottom: 1px solid #333; }
+        .modal-title { font-size: 18px; font-weight: 600; }
+        .modal-close { background: #333; border: none; color: #888; width: 32px; height: 32px; border-radius: 8px; font-size: 20px; cursor: pointer; }
+        .modal-close:hover { background: #444; color: #fff; }
+        .modal-body { padding: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 13px; color: #888; margin-bottom: 8px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px 16px; background: #222; border: 1px solid #333; border-radius: 8px; color: #fff; font-size: 14px; font-family: inherit; }
+        .form-input:focus, .form-select:focus, .form-textarea:focus { outline: none; border-color: #555; }
+        .form-textarea { min-height: 80px; resize: vertical; }
+        .form-select { cursor: pointer; }
+        .image-upload { border: 2px dashed #333; border-radius: 12px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; }
+        .image-upload:hover { border-color: #555; background: #222; }
+        .upload-text { color: #666; font-size: 14px; }
+        .upload-preview { margin-top: 16px; }
+        .upload-preview img { max-width: 100%; max-height: 200px; border-radius: 8px; }
+        .submit-btn { width: 100%; padding: 14px; background: #fff; color: #000; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .submit-btn:hover { background: #e0e0e0; }
+        .ad-card { position: relative; }
+        .ad-card .delete-creative { position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.6); border: none; color: #888; width: 28px; height: 28px; border-radius: 6px; font-size: 16px; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+        .ad-card:hover .delete-creative { opacity: 1; }
+        .ad-card .delete-creative:hover { background: #ff4444; color: #fff; }
+        .ad-preview img { max-width: 100%; max-height: 160px; object-fit: contain; border-radius: 4px; }
+        .ad-notes { font-size: 12px; color: #666; margin-top: 12px; padding-top: 12px; border-top: 1px solid #333; }
         @media (max-width: 1200px) { .overview-grid { grid-template-columns: repeat(2, 1fr); } .channels-grid, .playbook-grid { grid-template-columns: 1fr; } .product-ladder { flex-direction: column; } .timeline { flex-direction: column; } .ad-grid { grid-template-columns: 1fr; } }
         @media (max-width: 768px) { .overview-grid { grid-template-columns: 1fr; } .funnel { flex-direction: column; gap: 12px; } .funnel-arrow { transform: rotate(90deg); } }
     </style>
@@ -507,9 +536,12 @@
 
         <!-- AD CREATIVES -->
         <section id="ads" class="section">
-            <div class="section-title" style="margin-bottom: 24px;">Ad Creative Library</div>
-            <div class="ad-grid">
-                <div class="ad-card">
+            <div class="channel-header" style="margin-bottom: 24px;">
+                <div class="section-title" style="margin-bottom: 0;">Ad Creative Library</div>
+                <button class="add-creative-btn" onclick="openCreativeModal()">+ Add Creative</button>
+            </div>
+            <div class="ad-grid" id="ad-grid">
+                <div class="ad-card" data-id="default-1">
                     <div class="ad-preview"><div class="ad-preview-text">"Your competitors are using AI. You're still pulling reports manually."</div></div>
                     <div class="ad-details">
                         <div class="ad-type">Video Ad / 60-90 sec</div>
@@ -517,7 +549,7 @@
                         <div class="ad-meta"><span>Cold traffic</span><span>Problem-aware</span></div>
                     </div>
                 </div>
-                <div class="ad-card">
+                <div class="ad-card" data-id="default-2">
                     <div class="ad-preview"><div class="ad-preview-text">"Take the 2-minute AI Readiness Quiz. Find out if you're leaving money on the table."</div></div>
                     <div class="ad-details">
                         <div class="ad-type">Video Ad / 30 sec</div>
@@ -525,7 +557,7 @@
                         <div class="ad-meta"><span>Cold traffic</span><span>Lead magnet</span></div>
                     </div>
                 </div>
-                <div class="ad-card">
+                <div class="ad-card" data-id="default-3">
                     <div class="ad-preview"><div class="ad-preview-text">"49% of small businesses now use AI. The other 51% are falling behind. Which are you?"</div></div>
                     <div class="ad-details">
                         <div class="ad-type">Static Image</div>
@@ -533,7 +565,7 @@
                         <div class="ad-meta"><span>Cold traffic</span><span>Curiosity</span></div>
                     </div>
                 </div>
-                <div class="ad-card">
+                <div class="ad-card" data-id="default-4">
                     <div class="ad-preview"><div class="ad-preview-text">"You took the quiz. Here's what most businesses miss — and how to fix it for $297."</div></div>
                     <div class="ad-details">
                         <div class="ad-type">Video Ad / 60 sec</div>
@@ -553,6 +585,70 @@
                 </div>
             </div>
         </section>
+
+        <!-- Creative Modal -->
+        <div class="modal-overlay" id="creative-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <div class="modal-title">Add Creative</div>
+                    <button class="modal-close" onclick="closeCreativeModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Hook / Headline</label>
+                        <input type="text" class="form-input" id="creative-hook" placeholder="e.g., Hook 5: Social Proof">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ad Copy / Script</label>
+                        <textarea class="form-textarea" id="creative-copy" placeholder="The main ad text or script..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ad Type</label>
+                        <select class="form-select" id="creative-type">
+                            <option value="Video Ad / 60-90 sec">Video Ad / 60-90 sec</option>
+                            <option value="Video Ad / 30 sec">Video Ad / 30 sec</option>
+                            <option value="Video Ad / 15 sec">Video Ad / 15 sec</option>
+                            <option value="Static Image">Static Image</option>
+                            <option value="Carousel">Carousel</option>
+                            <option value="Story / Reel">Story / Reel</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Audience</label>
+                        <select class="form-select" id="creative-audience">
+                            <option value="Cold traffic">Cold traffic</option>
+                            <option value="Warm traffic">Warm traffic</option>
+                            <option value="Retargeting">Retargeting</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Stage</label>
+                        <select class="form-select" id="creative-stage">
+                            <option value="Problem-aware">Problem-aware</option>
+                            <option value="Solution-aware">Solution-aware</option>
+                            <option value="Lead magnet">Lead magnet</option>
+                            <option value="Scorecard upsell">Scorecard upsell</option>
+                            <option value="Audit sale">Audit sale</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Reference Image</label>
+                        <div class="image-upload" id="image-upload" onclick="document.getElementById('image-input').click()">
+                            <div class="upload-text">Click to upload or drag image here</div>
+                            <div class="upload-preview" id="upload-preview"></div>
+                        </div>
+                        <input type="file" id="image-input" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
+                        <div style="margin-top: 8px; text-align: center; color: #666; font-size: 12px;">— or —</div>
+                        <input type="text" class="form-input" id="creative-image-url" placeholder="Paste image URL" style="margin-top: 8px;" onchange="handleImageUrl(this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-textarea" id="creative-notes" placeholder="Reference links, inspiration, notes..."></textarea>
+                    </div>
+                    <button class="submit-btn" onclick="saveCreative()">Save Creative</button>
+                </div>
+            </div>
+        </div>
 
         <!-- BUDGET -->
         <section id="budget" class="section">
@@ -721,6 +817,108 @@
         
         // Initialize
         loadWeekTasks();
+        loadCreatives();
+        
+        // Creative modal functions
+        let currentImageData = null;
+        
+        function openCreativeModal() {
+            document.getElementById('creative-modal').classList.add('active');
+            document.getElementById('creative-hook').value = '';
+            document.getElementById('creative-copy').value = '';
+            document.getElementById('creative-notes').value = '';
+            document.getElementById('creative-image-url').value = '';
+            document.getElementById('upload-preview').innerHTML = '';
+            currentImageData = null;
+        }
+        
+        function closeCreativeModal() {
+            document.getElementById('creative-modal').classList.remove('active');
+        }
+        
+        function handleImageUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImageData = e.target.result;
+                    document.getElementById('upload-preview').innerHTML = '<img src="' + currentImageData + '">';
+                    document.getElementById('creative-image-url').value = '';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        
+        function handleImageUrl(url) {
+            if (url) {
+                currentImageData = url;
+                document.getElementById('upload-preview').innerHTML = '<img src="' + url + '" onerror="this.style.display=\'none\'">';
+            }
+        }
+        
+        function saveCreative() {
+            const creative = {
+                id: 'c' + Date.now(),
+                hook: document.getElementById('creative-hook').value || 'Untitled',
+                copy: document.getElementById('creative-copy').value,
+                type: document.getElementById('creative-type').value,
+                audience: document.getElementById('creative-audience').value,
+                stage: document.getElementById('creative-stage').value,
+                image: currentImageData,
+                notes: document.getElementById('creative-notes').value
+            };
+            
+            let creatives = JSON.parse(localStorage.getItem('kyros-creatives') || '[]');
+            creatives.push(creative);
+            localStorage.setItem('kyros-creatives', JSON.stringify(creatives));
+            
+            renderCreative(creative);
+            closeCreativeModal();
+        }
+        
+        function renderCreative(creative) {
+            const grid = document.getElementById('ad-grid');
+            const previewContent = creative.image 
+                ? '<img src="' + creative.image + '">' 
+                : '<div class="ad-preview-text">"' + (creative.copy || creative.hook) + '"</div>';
+            const notesHtml = creative.notes ? '<div class="ad-notes">' + creative.notes + '</div>' : '';
+            
+            const cardHtml = `
+                <div class="ad-card" data-id="${creative.id}">
+                    <button class="delete-creative" onclick="deleteCreative('${creative.id}')">&times;</button>
+                    <div class="ad-preview">${previewContent}</div>
+                    <div class="ad-details">
+                        <div class="ad-type">${creative.type}</div>
+                        <div class="ad-hook">${creative.hook}</div>
+                        <div class="ad-meta"><span>${creative.audience}</span><span>${creative.stage}</span></div>
+                        ${notesHtml}
+                    </div>
+                </div>`;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+        }
+        
+        function deleteCreative(id) {
+            if (confirm('Delete this creative?')) {
+                let creatives = JSON.parse(localStorage.getItem('kyros-creatives') || '[]');
+                creatives = creatives.filter(c => c.id !== id);
+                localStorage.setItem('kyros-creatives', JSON.stringify(creatives));
+                document.querySelector('.ad-card[data-id="' + id + '"]').remove();
+            }
+        }
+        
+        function loadCreatives() {
+            const creatives = JSON.parse(localStorage.getItem('kyros-creatives') || '[]');
+            creatives.forEach(creative => renderCreative(creative));
+        }
+        
+        // Close modal on outside click
+        document.getElementById('creative-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeCreativeModal();
+        });
+        
+        // Close modal on Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeCreativeModal();
+        });
     </script>
 </body>
 </html>
